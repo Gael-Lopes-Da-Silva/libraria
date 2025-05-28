@@ -214,7 +214,7 @@ h3 {
 /* Book cover image */
 .book-cover {
     width: 100%;
-    height: 192px;
+    height: 220px;
     object-fit: cover;
     border-radius: 4px;
     margin-bottom: 0.5rem;
@@ -255,6 +255,61 @@ h3 {
 
 .book-details a:hover {
     text-decoration: underline;
+}
+
+.book-details-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.wiki-image {
+    margin-bottom: 10px;
+}
+
+.wiki-image img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.book-details-cover {
+    width: 200px;
+    height: 300px;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.book-info {
+    flex: 2 1 500px;
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.book-info ul {
+    margin-left: 1rem;
+}
+
+.book-info>p {
+    margin-bottom: 1rem;
+}
+
+.book-info>blockquote {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--bg-color);
+    border-left: solid lightgray 4px;
+}
+
+.book-info>div {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--bg-color);
 }
 
 /* Modal */
@@ -414,6 +469,10 @@ h3 {
 
     .book-details img {
         max-width: 150px;
+    }
+
+    .book-details-cover {
+        display: none;
     }
 }
 
