@@ -1,6 +1,12 @@
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 
-// Book Details Component
-const BookDetails: React.FC = () => {
+import type { Book, BookDetails, WikiData } from "../utils/Interfaces";
+
+import placeholder from "../assets/placeholder.webp";
+
+const BookDetailsPage: React.FC = () => {
     const { key } = useParams<{ key: string }>();
     const [selectedBook, setSelectedBook] = useState<Book | null>(null);
     const [wikiData, setWikiData] = useState<WikiData | null>(null);
@@ -180,3 +186,5 @@ const BookDetails: React.FC = () => {
         </div>
     );
 };
+
+export default BookDetailsPage;

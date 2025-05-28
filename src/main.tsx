@@ -1,13 +1,13 @@
-import React, { StrictMode, useState, useEffect } from 'react';
+import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { BsFillSunFill, BsFillMoonStarsFill } from "react-icons/bs";
-import ReactMarkdown from 'react-markdown';
 
 import { useModal } from "./utils/Hooks";
 
 import HomePage from "./components/HomePage";
-import SearchResults from "./components/SearchResults";
+import SearchResults from "./components/SearchResultsPage";
+import BookDetails from "./components/BookDetailsPage";
 
 import './main.css';
 

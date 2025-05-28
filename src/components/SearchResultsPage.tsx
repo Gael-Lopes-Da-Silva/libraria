@@ -6,7 +6,7 @@ import type { Book } from "../utils/Interfaces";
 import placeholder from "../assets/placeholder.webp";
 
 // Search Results Component
-const SearchResults: React.FC = () => {
+const SearchResultsPage: React.FC = () => {
     const navigate = useNavigate();
     const { search } = useLocation();
     const query = new URLSearchParams(search).get('query') || '';
@@ -75,4 +75,4 @@ const SearchResults: React.FC = () => {
     );
 };
 
-export default SearchResults;
+export default SearchResultsPage;
