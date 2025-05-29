@@ -98,7 +98,7 @@ const BookDetailsPage: React.FC = () => {
                             </div>
                         )}
                         <h2>{selectedBook.title}</h2>
-                        <p><strong>Author:</strong> {selectedBook.author_name?.join(', ') || 'Unknown'}</p>
+                        <p data-testid="author"><strong>Author:</strong> {selectedBook.author_name?.join(', ') || 'Unknown'}</p>
 
                         {/* Description */}
                         {selectedBook.details?.description && (

@@ -37,9 +37,9 @@ const App: React.FC = () => {
         const handleAdvancedSearch = (e: React.FormEvent) => {
             e.preventDefault();
             let query = '';
-            if (author) query += `author:${encodeURIComponent(author)} `;
+            if (author) query += `author:${author} `;
             if (year) query += `first_publish_year:${year} `;
-            if (subject) query += `subject:${encodeURIComponent(subject)} `;
+            if (subject) query += `subject:${subject} `;
             if (query.trim()) {
                 navigate(`/search?query=${encodeURIComponent(query.trim())}`);
                 closeModal();
@@ -79,7 +79,7 @@ const App: React.FC = () => {
                                 placeholder="Enter subject"
                             />
                         </div>
-                        <button type="submit">Search</button>
+                        <button type="submit" aria-label="Advanced search submit">Search</button>
                     </form>
                 </div>
             </div>
@@ -91,7 +91,7 @@ const App: React.FC = () => {
             <nav className="navbar">
                 <h1 onClick={() => navigate('/')}>Libraria</h1>
                 <div className="nav-links">
-                    <form onSubmit={handleQuickSearch} className="search-form">
+                    <form onSubmit={handleQuickSearch} className="search-form" data-testid="quick-search">
                         <div className="search-input-wrapper">
                             <input
                                 type="text"
@@ -101,8 +101,8 @@ const App: React.FC = () => {
                                 aria-label="Search books"
                             />
                         </div>
-                        <button type="submit" aria-label="Advanced search submit">Search</button>
-                        <button type="button" onClick={openModal} className="advanced-search-btn">
+                        <button type="submit" aria-label="Quick search submit">Search</button>
+                        <button type="button" onClick={openModal} className="advanced-search-btn" data-testid="open-advanced-modal">
                             Advanced
                         </button>
                     </form>

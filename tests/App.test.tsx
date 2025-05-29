@@ -1,15 +1,29 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import type { Mock } from 'vitest';
 import { useNavigate } from 'react-router-dom';
-import { useModal } from '../src/utils/Hooks';
+import * as Hooks from '../src/utils/Hooks';
+import { MemoryRouter } from 'react-router-dom';
 
 import App from '../src/components/AppPage';
-import React from 'react';
+
+vi.mock('../src/utils/Hooks', () => ({
+    useModal: vi.fn(),
+}));
+
+vi.mock('react-router-dom', async () => {
+    const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+    return {
+        ...actual,
+        useNavigate: vi.fn(),
+    };
+});
+
 
 describe('App Component', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        useModal.mockReturnValue({
+        (Hooks.useModal as ReturnType<typeof vi.fn>).mockReturnValue({
             isOpen: false,
             openModal: vi.fn(),
             closeModal: vi.fn(),
@@ -17,12 +31,20 @@ describe('App Component', () => {
     });
 
     it('renders without crashing', () => {
-        render(<App />);
+        render(
+            <MemoryRouter>
+                <App />
+            </MemoryRouter>
+        );
         expect(screen.getByText('Libraria')).toBeInTheDocument();
     });
 
     it('toggles theme when theme button is clicked', () => {
-        render(<App />);
+        render(
+            <MemoryRouter>
+                <App />
+            </MemoryRouter>
+        );
         const themeButton = screen.getByRole('button', { name: /toggle theme/i });
         fireEvent.click(themeButton);
         expect(document.documentElement.classList.contains('dark')).toBe(true);
@@ -32,11 +54,15 @@ describe('App Component', () => {
 
     it('handles quick search submission', () => {
         const mockNavigate = vi.fn();
-        useNavigate.mockReturnValue(mockNavigate);
+        (useNavigate as unknown as Mock).mockReturnValue(mockNavigate);
 
-        render(<App />);
+        render(
+            <MemoryRouter>
+                <App />
+            </MemoryRouter>
+        );
         const searchInput = screen.getByLabelText(/search books/i);
-        const searchForm = screen.getByRole('form', { name: /quick search/i });
+        const searchForm = screen.getByTestId('quick-search');
 
         fireEvent.change(searchInput, { target: { value: 'test book' } });
         fireEvent.submit(searchForm);
@@ -45,14 +71,18 @@ describe('App Component', () => {
 
     it('opens advanced search modal', () => {
         const mockOpenModal = vi.fn();
-        useModal.mockReturnValue({
+        (Hooks.useModal as ReturnType<typeof vi.fn>).mockReturnValue({
             isOpen: false,
             openModal: mockOpenModal,
             closeModal: vi.fn(),
         });
 
-        render(<App />);
-        const advancedButton = screen.getByRole('button', { name: /advanced/i });
+        render(
+            <MemoryRouter>
+                <App />
+            </MemoryRouter>
+        );
+        const advancedButton = screen.getByTestId('open-advanced-modal');
         fireEvent.click(advancedButton);
         expect(mockOpenModal).toHaveBeenCalled();
     });
@@ -60,28 +90,48 @@ describe('App Component', () => {
     it('handles advanced search submission', async () => {
         const mockNavigate = vi.fn();
         const mockCloseModal = vi.fn();
-        useNavigate.mockReturnValue(mockNavigate);
-        useModal.mockReturnValue({
-            isOpen: true,
+        (useNavigate as unknown as Mock).mockReturnValue(mockNavigate);
+        (Hooks.useModal as ReturnType<typeof vi.fn>).mockReturnValue({
+            isOpen: false,
             openModal: vi.fn(),
             closeModal: mockCloseModal,
         });
 
-        render(<App />);
-
-        const authorInput = screen.getByPlaceholderText(/enter author name/i);
-        const yearInput = screen.getByPlaceholderText(/enter year/i);
-        const subjectInput = screen.getByPlaceholderText(/enter subject/i);
-        const advancedSearchButton = screen.getByRole('button', { name: /advanced search submit/i });
-
-        fireEvent.change(authorInput, { target: { value: 'Jane Austen' } });
-        fireEvent.change(yearInput, { target: { value: '1813' } });
-        fireEvent.change(subjectInput, { target: { value: 'Romance' } });
-        fireEvent.click(advancedSearchButton);
-
-        expect(mockNavigate).toHaveBeenCalledWith(
-            '/search?query=author%3AJane%20Austen%20first_publish_year%3A1813%20subject%3ARomance'
+        render(
+            <MemoryRouter>
+                <App />
+            </MemoryRouter>
         );
-        expect(mockCloseModal).toHaveBeenCalled();
+
+        // 1) Ouvrir la modale
+        fireEvent.click(screen.getByText('Advanced'));
+
+        // 2) Attendre l'apparition du formulaire
+        await waitFor(() => {
+            expect(screen.getByPlaceholderText(/enter author name/i)).toBeInTheDocument();
+        });
+
+        // 3) Remplir et soumettre
+        fireEvent.change(screen.getByPlaceholderText(/enter author name/i), {
+            target: { value: 'Jane Austen' },
+        });
+        fireEvent.change(screen.getByPlaceholderText(/enter year/i), {
+            target: { value: '1813' },
+        });
+        fireEvent.change(screen.getByPlaceholderText(/enter subject/i), {
+            target: { value: 'Romance' },
+        });
+
+        const submitBtn = screen.getByLabelText('Advanced search submit');
+        fireEvent.click(submitBtn);
+
+        // 4) Attendre et vérifier
+        await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalledWith(
+                '/search?query=author%3AJane%20Austen%20first_publish_year%3A1813%20subject%3ARomance'
+            );
+            expect(mockCloseModal).toHaveBeenCalled();
+        });
     });
+
 });
