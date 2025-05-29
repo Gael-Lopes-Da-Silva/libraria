@@ -31,7 +31,12 @@ const HomePage: React.FC = () => {
             setError(null);
 
             const mockRecentChanges: RecentChange[] = [
-                { id: '1', comment: 'Sample change', timestamp: '2025-05-28T12:00:00Z', author: { displayname: 'Test User' } }
+                {
+                    id: 'mock1',
+                    comment: 'Sample change',
+                    timestamp: '2025-05-28T12:00:00Z',
+                    author: { displayname: 'Test User' }
+                }
             ];
 
             try {
@@ -73,7 +78,7 @@ const HomePage: React.FC = () => {
                 <div className="card-grid">
                     {recentChanges.length > 0 ? (
                         recentChanges.map(change => (
-                            <div key={change.id} className="card">
+                            <div key={change.id} className="card" data-testid="recent-change">
                                 <p className="font-semibold">{change.comment || 'No comment'}</p>
                                 <p>By {change.author?.displayname || 'Unknown'} on {new Date(change.timestamp).toLocaleDateString()}</p>
                             </div>
